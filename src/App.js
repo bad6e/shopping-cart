@@ -1,26 +1,29 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from 'react'
+import { Provider } from 'react-redux'
+import Navbar from 'react-bootstrap/Navbar'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+// Store
+import store from './store'
+
+// Components
+import Cart from './components/cart'
+
+// Scss
+import 'bootstrap/dist/css/bootstrap.min.css'
+import './App.scss'
+
+class App extends React.Component {
+
+  render() {
+    return (
+      <Provider store={store}>
+        <Navbar bg="light" expand="lg">
+          <Navbar.Brand href="#home">Bret's Cart</Navbar.Brand>
+        </Navbar>
+        <Cart />
+      </Provider>
+    )
+  }
 }
 
-export default App;
+export default App
