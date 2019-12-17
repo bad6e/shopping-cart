@@ -1,8 +1,18 @@
 export const ADD_ITEM = 'ADD_ITEM'
 export const DECREMENT_QTY = 'DECREMENT_QTY'
-export const REMOVE_ITEM = 'REMOVE_ITEM'
-export const UPDATE_PRICE = 'UPDATE_PRICE'
 export const INCREMENT_QTY = 'INCREMENT_QTY'
+export const REMOVE_ITEM = 'REMOVE_ITEM'
+export const SET_CART = 'SET_CART'
+export const UPDATE_PRICE = 'UPDATE_PRICE'
+
+export const setCart = payload => dispatch => {
+  dispatch({
+    type: SET_CART,
+    payload,
+  })
+
+  dispatch(updatePrice())
+}
 
 export const addItem = payload => dispatch => {
   dispatch({

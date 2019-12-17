@@ -13,9 +13,13 @@ import Spinner from 'react-bootstrap/Spinner'
 import {
   addItem,
   decrementByOne,
-  removeItem,
   incrementByOne,
+  removeItem,
+  setCart,
  } from '../../actions'
+
+ // Utils
+import { fetchItemsFromLocalStorage, ITEM_KEY } from '../../localStorageHelper'
 
 // Scss
 import './cart.scss'
@@ -25,8 +29,20 @@ class Cart extends React.Component {
     trips: [],
   }
 
-  componentWillReceiveProps(nextProps) {
-    this.setState({ trips: nextProps.trips });
+  componentDidMount() {
+    const { setCart } = this.props
+    const savedCartItems = fetchItemsFromLocalStorage(ITEM_KEY)
+    console.log(savedCartItems)
+    !isEmpty(savedCartItems) && setCart(savedCartItems)
+  }
+
+  componentDidUpdate(prevProps) {
+    const { trips: prevTrips } = prevProps
+    const { trips } = this.props
+
+    if (prevTrips !== trips) {
+      this.setState({ trips })
+    }
   }
 
   decrementItem = item => {
@@ -138,7 +154,9 @@ class Cart extends React.Component {
 }
 
 export default compose(
-  firestoreConnect((props) => [{ collection: 'trips'}]),
+  firestoreConnect((props) => [
+    { collection: 'trips'},
+  ]),
   connect((state) => ({
     trips: state.firestore.ordered.trips,
     cart: state.cart,
@@ -147,7 +165,8 @@ export default compose(
   {
     addItem,
     decrementByOne,
-    removeItem,
     incrementByOne,
+    removeItem,
+    setCart,
   })
 )(Cart)

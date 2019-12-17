@@ -3,6 +3,7 @@
   DECREMENT_QTY,
   INCREMENT_QTY,
   REMOVE_ITEM,
+  SET_CART,
   UPDATE_PRICE,
 } from '../actions'
 
@@ -15,6 +16,8 @@ const totalValue = (acc, val) => acc + val.quantity * val.price
 
 export default (state = initialState, action) => {
   switch (action.type) {
+    case SET_CART:
+    return { cartItems: action.payload }
     case ADD_ITEM:
       const itemInCart = state.cartItems.find(item => item.id === action.payload.id)
       const itemToBeAdded = action.payload

@@ -10,8 +10,17 @@ import {
  } from 'react-redux-firebase'
 import { composeWithDevTools } from 'redux-devtools-extension'
 import { reduxFirestore, firestoreReducer } from 'redux-firestore'
+import { isEmpty } from 'lodash'
 
 import cartReducer from './reducers'
+import { removeItemsFromLocalStorage, ITEM_KEY, setItemsInLocalStorage } from './localStorageHelper'
+
+import {
+  ADD_ITEM,
+  DECREMENT_QTY,
+  INCREMENT_QTY,
+  REMOVE_ITEM,
+} from './actions'
 
 const firebaseConfig = {
   apiKey: "AIzaSyCPd_v6lP8xkVX_HmJFxJ-p1eDlpmwb-04",
@@ -24,19 +33,30 @@ const firebaseConfig = {
   measurementId: "G-NK6C2X9VQR"
 }
 
+const WHITE_LISTED_ACTIONS = [
+  ADD_ITEM,
+  DECREMENT_QTY,
+  INCREMENT_QTY,
+  REMOVE_ITEM,
+]
+
+const saveToLocalStorage = () => store => next => action => {
+  if (WHITE_LISTED_ACTIONS.includes(action.type)) {
+    removeItemsFromLocalStorage(ITEM_KEY)
+    next(action)
+    const updatedCartItems = store.getState().cart.cartItems
+    setItemsInLocalStorage(ITEM_KEY, updatedCartItems)
+  } else {
+    next(action)
+  }
+}
+
 // Initialize firebase instance
 firebase.initializeApp(firebaseConfig)
 
 // Initialize other services on firebase instance
 firebase.firestore() // <- needed if using firestore
 firebase.functions() // <- needed if using httpsCallable
-
-
-// db.collection("trips").get().then((querySnapshot) => {
-//   querySnapshot.forEach((doc) => {
-//     console.log(doc.data(), 'doc')
-//   });
-// });
 
 const rrfConfig = {
   userProfile: 'users',
@@ -62,7 +82,9 @@ const store = createStoreWithFirebase(
   rootReducer,
   initialState,
   composeWithDevTools(
-    applyMiddleware(thunk.withExtraArgument(getFirebase)),
+    applyMiddleware(
+      saveToLocalStorage(),
+      thunk.withExtraArgument(getFirebase)),
   ),
 )
 
