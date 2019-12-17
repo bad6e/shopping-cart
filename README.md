@@ -7,10 +7,11 @@ It utilizes react-bootstrap, firebase, localstorage, and react.
 ### Getting Up and Running
 
 1. Clone Repo and navigate to root file
-2. Install the front-end packages - `npm install`
-3. Start Application - `npm start`
-4. When both rails AND webpack are running: Navigate to http://localhost:3000/
-5. Enjoy Bret's Cart
+2. Navigate to store and insert keys provided by Bret in line 29 and line 30 - apiKey and projectId
+3. Install the front-end packages - `npm install`
+4. Start Application - `npm start`
+5. When both rails AND webpack are running: Navigate to http://localhost:3000/
+6. Enjoy Bret's Cart
 
 #### Development Scripts
 
