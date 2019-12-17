@@ -10,10 +10,13 @@ import {
  } from 'react-redux-firebase'
 import { composeWithDevTools } from 'redux-devtools-extension'
 import { reduxFirestore, firestoreReducer } from 'redux-firestore'
-import { isEmpty } from 'lodash'
 
 import cartReducer from './reducers'
-import { removeItemsFromLocalStorage, ITEM_KEY, setItemsInLocalStorage } from './localStorageHelper'
+import {
+  removeItemsFromLocalStorage,
+  ITEM_KEY,
+  setItemsInLocalStorage,
+} from './localStorageHelper'
 
 import {
   ADD_ITEM,
@@ -23,14 +26,8 @@ import {
 } from './actions'
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCPd_v6lP8xkVX_HmJFxJ-p1eDlpmwb-04",
-  authDomain: "shopping-cart-2.firebaseapp.com",
-  databaseURL: "https://shopping-cart-2.firebaseio.com",
+  // apiKey: "AIzaSyCPd_v6lP8xkVX_HmJFxJ-p1eDlpmwb-04",
   projectId: "shopping-cart-2",
-  storageBucket: "shopping-cart-2.appspot.com",
-  messagingSenderId: "126938225430",
-  appId: "1:126938225430:web:4744a9aee69254b1a00e37",
-  measurementId: "G-NK6C2X9VQR"
 }
 
 const WHITE_LISTED_ACTIONS = [
