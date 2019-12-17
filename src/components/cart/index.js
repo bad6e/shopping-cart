@@ -32,7 +32,6 @@ class Cart extends React.Component {
   componentDidMount() {
     const { setCart } = this.props
     const savedCartItems = fetchItemsFromLocalStorage(ITEM_KEY)
-    console.log(savedCartItems)
     !isEmpty(savedCartItems) && setCart(savedCartItems)
   }
 
