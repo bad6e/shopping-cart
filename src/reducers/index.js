@@ -1,6 +1,7 @@
   import {
   ADD_ITEM,
   DECREMENT_QTY,
+  INCREMENT_QTY,
   REMOVE_ITEM,
   UPDATE_PRICE,
 } from '../actions'
@@ -10,46 +11,50 @@ const initialState = {
   totalPrice: 0
 }
 
+const totalValue = (acc, val) => acc + val.quantity * val.price
+
 export default (state = initialState, action) => {
   switch (action.type) {
     case ADD_ITEM:
-      const isAlreadyAdded = state.cartItems.find(
-        product => product.id === action.payload.id
-      );
-      if (!isAlreadyAdded) action.payload.qty = 1;
+      const itemInCart = state.cartItems.find(item => item.id === action.payload.id)
+      const itemToBeAdded = action.payload
+      itemToBeAdded.quantity = 1
 
-      return {
-        ...state,
-        cartItems: !isAlreadyAdded
-          ? [action.payload, ...state.cartItems]
-          : state.cartItems.map(
-            item =>
-              item.id === action.payload.id
-                ? { ...item, qty: ++item.qty }
-                : item
-          )
-      };
+      if (itemInCart) {
+        itemInCart.quantity += 1
+        return { cartItems: [...state.cartItems] }
+      } else {
+        return { cartItems: [itemToBeAdded, ...state.cartItems] }
+      }
     case REMOVE_ITEM:
       return {
         ...state,
-        cartItems: state.cartItems.filter(item => item.id !== action.payload)
-      };
+        cartItems: state.cartItems.filter(item => item.id !== action.payload.id)
+      }
     case DECREMENT_QTY:
+      const decrementedCartItems = state.cartItems.map((item) => {
+        return item.id === action.payload.id ? { ...item, quantity: --item.quantity } : item
+      })
+
       return {
         ...state,
-        cartItems: state.cartItems.map(
-          item =>
-            item.id === action.payload.id ? { ...item, qty: --item.qty } : item
-        )
-      };
+        cartItems: decrementedCartItems,
+      }
+    case INCREMENT_QTY:
+      const incrementedCartItems = state.cartItems.map((item) => {
+        return item.id === action.payload.id ? { ...item, quantity: ++item.quantity } : item
+      })
+
+      return {
+        ...state,
+        cartItems: incrementedCartItems
+      }
     case UPDATE_PRICE:
       return {
         ...state,
-        totalPrice: state.cartItems
-          .reduce((acc, val) => acc + val.qty * val.price, 0)
-          .toFixed(2)
-      };
+        totalPrice: state.cartItems.reduce(totalValue, 0)
+      }
     default:
-      return state;
+      return state
   }
 }

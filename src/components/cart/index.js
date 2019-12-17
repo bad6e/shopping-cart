@@ -6,12 +6,22 @@ import Card from 'react-bootstrap/Card'
 import ListGroup from 'react-bootstrap/ListGroup'
 
 // Actions
-import { addItem, removeItem } from '../../actions'
+import {
+  addItem,
+  decrementByOne,
+  removeItem,
+  incrementByOne,
+ } from '../../actions'
 
 // Scss
 import './cart.scss'
 
 class Cart extends React.Component {
+  decrementItem = item => {
+    const { decrementByOne, removeItem } = this.props
+    return item.quantity > 1 ? decrementByOne(item) : removeItem(item)
+  }
+
   renderCartItems = () => {
     const {
       cart: {
@@ -19,7 +29,9 @@ class Cart extends React.Component {
         totalPrice,
       },
       removeItem,
+      incrementByOne,
     } = this.props
+
 
     if (isEmpty(cartItems)) return (
       <h5>Your cart is empty!</h5>
@@ -31,11 +43,21 @@ class Cart extends React.Component {
           {
             cartItems.map(item => (
               <ListGroup.Item className="d-flex flex-row" key={item.id}>
-                {item.qty}x - {item.name} - Price: ${item.price}
+                {item.quantity}x - {item.name} - Price: ${item.price}
                 <Button
-                  onClick={() => removeItem(item.id)}
+                  onClick={() => removeItem(item)}
                   className="ml-2">
                   Remove Trip
+                </Button>
+                <Button
+                  onClick={() => incrementByOne(item)}
+                  className="ml-2">
+                  + 1
+                </Button>
+                <Button
+                  onClick={() => this.decrementItem(item)}
+                  className="ml-2">
+                  - 1
                 </Button>
               </ListGroup.Item>
           ))
@@ -57,6 +79,7 @@ class Cart extends React.Component {
   render() {
     const { addItem } = this.props
 
+    // hardcoded items - would come from api call
     const trip = {
       id: 1,
       name: 'Disney World Trip',
@@ -112,7 +135,12 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { addItem, removeItem }
+  {
+    addItem,
+    decrementByOne,
+    incrementByOne,
+    removeItem,
+  }
 )(Cart)
 
 
