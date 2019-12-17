@@ -26,7 +26,7 @@ import {
 } from './actions'
 
 const firebaseConfig = {
-  // apiKey: "AIzaSyCPd_v6lP8xkVX_HmJFxJ-p1eDlpmwb-04",
+  apiKey: "AIzaSyCPd_v6lP8xkVX_HmJFxJ-p1eDlpmwb-04",
   projectId: "shopping-cart-2",
 }
 
