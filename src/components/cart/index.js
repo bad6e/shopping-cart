@@ -1,9 +1,13 @@
 import React from 'react'
+import { compose } from 'redux'
 import { connect } from 'react-redux'
+import { firestoreConnect } from 'react-redux-firebase'
 import { isEmpty } from 'lodash'
 import Button from 'react-bootstrap/Button'
 import Card from 'react-bootstrap/Card'
+import CardGroup from 'react-bootstrap/CardGroup'
 import ListGroup from 'react-bootstrap/ListGroup'
+import Spinner from 'react-bootstrap/Spinner'
 
 // Actions
 import {
@@ -17,9 +21,48 @@ import {
 import './cart.scss'
 
 class Cart extends React.Component {
+  state = {
+    trips: [],
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({ trips: nextProps.trips });
+  }
+
   decrementItem = item => {
     const { decrementByOne, removeItem } = this.props
     return item.quantity > 1 ? decrementByOne(item) : removeItem(item)
+  }
+
+  renderTrips = () => {
+    const { trips } = this.state
+    const { addItem } = this.props
+
+    if (isEmpty(trips)) return (
+      <Spinner />
+    )
+
+    return (
+      <>
+        {
+          trips.map((trip) => {
+            return (
+              <Card className="my-5" key={trip.id}>
+                <Card.Body>
+                  <Card.Title>{trip.title}</Card.Title>
+                  <Card.Text>
+                    {trip.description}
+                  </Card.Text>
+                  <Button
+                    onClick={() => addItem(trip)}
+                    variant="primary">Add to Cart - ${trip.price}</Button>
+                </Card.Body>
+              </Card>
+            )
+          })
+        }
+      </>
+    )
   }
 
   renderCartItems = () => {
@@ -43,7 +86,7 @@ class Cart extends React.Component {
           {
             cartItems.map(item => (
               <ListGroup.Item className="d-flex flex-row" key={item.id}>
-                {item.quantity}x - {item.name} - Price: ${item.price}
+                {item.quantity}x - {item.title} - Price: ${item.price}
                 <Button
                   onClick={() => removeItem(item)}
                   className="ml-2">
@@ -64,7 +107,7 @@ class Cart extends React.Component {
           }
         </ListGroup>
         <div className="d-flex flex-column my-4">
-            <p>
+            <p className="text-right mr-2">
               <b>
                 Total Price:
                 $
@@ -77,21 +120,6 @@ class Cart extends React.Component {
   }
 
   render() {
-    const { addItem } = this.props
-
-    // hardcoded items - would come from api call
-    const trip = {
-      id: 1,
-      name: 'Disney World Trip',
-      price: 2000,
-    }
-
-    const trip2 = {
-      id: 2,
-      name: 'Disneyland Trip',
-      price: 1000,
-    }
-
     return (
       <>
         <div className="my-3 d-flex text-center flex-column">
@@ -100,53 +128,26 @@ class Cart extends React.Component {
         </div>
         <hr />
         <div className="d-flex justify-content-center">
-          <Card className="my-5">
-            <Card.Body>
-              <Card.Title>Trip to Walt Disney World</Card.Title>
-              <Card.Text>
-                Live the life of fantasy. Go to Disney World
-                </Card.Text>
-              <Button
-                onClick={() => addItem(trip)}
-                variant="primary">Add to Cart - $2,000</Button>
-            </Card.Body>
-          </Card>
-
-          <Card className="my-5">
-            <Card.Body>
-              <Card.Title>Trip to Disneyland</Card.Title>
-              <Card.Text>
-                Live the life of fantasy. Go to Disney Land
-                </Card.Text>
-              <Button
-                onClick={() => addItem(trip2)}
-                variant="primary">Add to Cart - $1,000</Button>
-            </Card.Body>
-          </Card>
+          <CardGroup>
+            {this.renderTrips()}
+          </CardGroup>
         </div>
       </>
     )
   }
 }
 
-const mapStateToProps = state => ({
-  cart: state.cart
-})
-
-export default connect(
-  mapStateToProps,
+export default compose(
+  firestoreConnect((props) => [{ collection: 'trips'}]),
+  connect((state) => ({
+    trips: state.firestore.ordered.trips,
+    cart: state.cart,
+    firestore: state.firestore,
+  }),
   {
     addItem,
     decrementByOne,
-    incrementByOne,
     removeItem,
-  }
+    incrementByOne,
+  })
 )(Cart)
-
-
-
-
-
-
-
-

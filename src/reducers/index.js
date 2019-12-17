@@ -18,12 +18,13 @@ export default (state = initialState, action) => {
     case ADD_ITEM:
       const itemInCart = state.cartItems.find(item => item.id === action.payload.id)
       const itemToBeAdded = action.payload
-      itemToBeAdded.quantity = 1
 
       if (itemInCart) {
         itemInCart.quantity += 1
         return { cartItems: [...state.cartItems] }
       } else {
+        itemToBeAdded.quantity = 1
+
         return { cartItems: [itemToBeAdded, ...state.cartItems] }
       }
     case REMOVE_ITEM:
